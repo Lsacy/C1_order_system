@@ -17,7 +17,6 @@ class Stock:
         self.__price = self.set_price(_price)                            # private
         self.__units_available = _units_available   # private
 
-    # TODO: complete Class
     def get_sku(self):
         return self.__sku
 
