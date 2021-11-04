@@ -12,10 +12,26 @@ class Stock:
         :param _units_available: units available in stock (private)
         :param _category: stock category
         """
-        self.__sku = _id                            # private, final, cannot be altered
-        # self.description = _description
-        # self.__price = 0                            # private
-        # self.set_price(_price)
-        # self.__units_available = _units_available   # private
+        self.__sku = _id     # private, final, cannot be altered
+        self.description = _description
+        self.__price = self.set_price(_price)                            # private
+        self.__units_available = _units_available   # private
 
-    # TODO: complete class
+    # TODO: complete Class
+    def get_sku(self):
+        return self.__sku
+
+    def get_price(self):
+        return self.__price
+
+    def set_price(self, _price):
+        return _price
+
+    def get_units_available(self):
+        return self.__units_available
+
+    def has_units_available(self, n):
+        return self.__units_available == n
+
+    def transact_units(self, n):
+        self.__units_available -= n

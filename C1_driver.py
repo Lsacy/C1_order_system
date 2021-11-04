@@ -23,7 +23,7 @@ def print_order_items(o: Order) -> int:
     """
     print(f"- order {o.get_id()} ({o.items_count()} item):")
     _order_value = 0
-    #
+
     # TODO: complete logic, consider steps
     #   - look up items of the order
     #   - foreach item:
@@ -38,6 +38,17 @@ def print_order_items(o: Order) -> int:
     #       print(f"  --> order value is: {float(_order_value / 100.0)}\n")
     #   - return order value
     #
+    for i in range(o.items_count()):
+        _sku = o.get_item(i).get_sku()
+        _units = o.get_item(i).units
+        _stock = sds.find_stock_by_sku(_sku)
+        _price = _stock.get_price()
+        _description = _stock.description
+        _total_price = _units * _price
+        print(f'  - {_units} x {_description} = {float(_total_price)}')
+
+        _order_value += _total_price
+
     print(f"  --> order value is: {float(_order_value / 100.0)}")
     return _order_value
 
@@ -58,11 +69,16 @@ def print_orders(_customer_id: int):
     #   - print the total value of all orders of the customer
     #
     _customer_orders = []  # TODO: look up orders
+    _customer_orders = ods.filter(lambda o: o.get_customer_id() == _customer_id)
+
     print(f"\n--> customer {_customer_id} has {len(_customer_orders)} orders")
 
-    # ...
 
     _total_order_value = 0  # TODO: compute _total_order_value
+
+    for _order in _customer_orders:
+        _total_order_value += print_order_items(_order)
+
     print(f"==> total order value is: {float(_total_order_value / 100.0)}")
 
 
@@ -83,11 +99,26 @@ if __name__ == "__main__":
     # print resulting customer list using the built-in map() function
     list(map(lambda c: print(f" - {c.name}, {c.address}"), _filtered_by_name))
 
+    # find an order object in data store using find_order_by_id
+    _orderID = '00-784-33313'
+    print(f'\n--> find order with id {_orderID}')
+    _o1 = ods.find_order_by_id(_orderID)
+    print(f'order ID:    {_orderID} has been found with attributes - \nCustomer ID: {_o1.get_customer_id()}, \n'
+          f'date:        {_o1.get_date()}, \nitem:        {_o1.get_item(0).get_sku()}, \nunits:       {_o1.get_item(0).units}')
+
+    # find one stock object in stock data store using
+    _stockID = '2208C002'
+    print(f'\n--> find stock item with sku {_stockID}')
+    _s1 = sds.find_stock_by_sku(_stockID)
+    print(f'stock sku {_stockID} has been found with attributes -  \n'
+          f'description: {_s1.description}, price: {_s1.get_price()} \n'
+          f'units available: {_s1.get_units_available()}')
+
     # find all orders for each customer
     print_orders(258090)    # customer 258090: 2 orders with 1 item each
-    # print_orders(368075)    # customer 368075: 1 order with 1 item each
-    # print_orders(986973)    # customer 986973: 1 order with 4 items
-    # print_orders(193667)    # customer 193667: 4 orders with 1 item each
-    # print_orders(973407)    # customer 973407: 0 orders, is customer
-    # print_orders(333333)    # customer 333333: 0 orders, not a customer
-    # print_orders(-1)        # customer -1: illegal customer id
+    print_orders(368075)    # customer 368075: 1 order with 1 item each
+    print_orders(986973)    # customer 986973: 1 order with 4 items
+    print_orders(193667)    # customer 193667: 4 orders with 1 item each
+    print_orders(973407)    # customer 973407: 0 orders, is customer
+    print_orders(333333)    # customer 333333: 0 orders, not a customer
+    print_orders(-1)        # customer -1: illegal customer id
